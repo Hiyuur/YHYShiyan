@@ -3,6 +3,7 @@
 #include "monitor/watchpoint.h"
 #include "nemu.h"
 
+
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -38,6 +39,51 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args) {
+	int num = 0;
+	if(args == NULL) {
+		num = 1;
+	}
+	else{
+		sscanf(args,"%d",&num);
+	}
+	cpu_exec(num);
+	return 0;
+}
+
+static int cmd_info(char *args) {
+	char parm;
+	int i;
+	sscanf(args,"%c",&parm);
+	if(parm == 'r') {
+		for(i = R_EAX;i <= R_EDI;i++) {
+			printf("%s\t0x%08x\n",regsl[i],cpu.gpr[check_reg_index(i)]._32);
+		}
+		printf("eip\t0x%08x\n",cpu.eip);
+	}
+	return 0;
+}
+
+static int cmd_x(char *args) {
+	int num;
+	hwaddr_t address;
+	int i;
+	char *c = strtok(args," ");
+	sscanf(c,"%d",&num);
+	args = c + strlen(c) + 1;
+	char *c2;
+	c2 = strtok(args,"x");
+	args = c2 + strlen(c2) + 1;
+	sscanf(args,"%x",&address);
+	printf("0x%08x:",address);
+	for(i = 0;i < num;i++) {
+		printf("0x%08x",swaddr_read(address,4));
+		address = address + 4;
+	}
+	printf("\n");
+	return 0;
+}
+
 static struct {
 	char *name;
 	char *description;
@@ -46,6 +92,9 @@ static struct {
 	{ "help", "Display informations about all supported commands", cmd_help },
 	{ "c", "Continue the execution of the program", cmd_c },
 	{ "q", "Exit NEMU", cmd_q },
+	{ "si", "Pauses after the program stepping N instructions.N defaults to 1", cmd_si },
+	{ "info", "r : print register state\nw : print watchpoint information", cmd_info},
+	{ "x", "Scan memory", cmd_x},
 
 	/* TODO: Add more commands */
 
