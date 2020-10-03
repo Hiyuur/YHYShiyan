@@ -36,7 +36,7 @@ static struct rule {
 	{"&&", AND, 2},
 	{"\\|\\|", OR, 1},
 	{"!", '!', 6},
-	{"0[xX][0-9a-zA-Z]+", HEXNUM, 0},
+	{"0[xX][0-9a-fA-F]+", HEXNUM, 0},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
