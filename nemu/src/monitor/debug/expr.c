@@ -133,7 +133,7 @@ int dominent_op(int p,int q) {
 	int i,j;
 	int op = p;
 	int min = 10;
-	for(i = p;i < q;i++) {
+	for(i = p;i <= q;i++) {
 		if(tokens[i].type == NUMBER) continue;
 		int num = 0;
 		bool t = true;
@@ -143,12 +143,12 @@ int dominent_op(int p,int q) {
 				break;
 			}
 			if(tokens[j].type == '(') num--;
-			if(tokens[j].type == '(') num++;
+			if(tokens[j].type == ')') num++;
 		}
 		if(!t)
 		continue;
-		if(tokens[j].priority <= min) {
-			min = tokens[j].priority;
+		if(tokens[i].priority <= min) {
+			min = tokens[i].priority;
 			op = i;
 		}
 	}
