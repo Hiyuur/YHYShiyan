@@ -188,9 +188,11 @@ uint32_t eval(int p ,int q) {
 			case NEQ : return val1 != val2;
 			case AND : return val1 && val2;
 			case OR : return val1 || val2;
-			default: assert(0);
+			default: break;
 		}
 	}
+	assert(1);
+	return -123456;
 }
 
 uint32_t expr(char *e, bool *success) {
