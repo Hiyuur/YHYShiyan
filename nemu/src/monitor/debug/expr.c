@@ -122,6 +122,7 @@ int check_parentheses(int p,int q) {
 		for(i = p + 1;i < q;i++) {
 			if(tokens[i].type == '(') num_l++;
 			if(tokens[i].type == ')') num_r++;
+			if(num_r > num_l) return false;
 		}
 		if(num_l == num_r)
 		return true;
