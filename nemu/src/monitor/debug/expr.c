@@ -101,7 +101,7 @@ static bool make_token(char *e) {
 
 					//panic("please implement me");
 				}
-
+				position = position + substr_len;
 				break;
 			}
 		}
