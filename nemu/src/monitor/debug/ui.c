@@ -83,6 +83,20 @@ static int cmd_x(char *args) {
 	return 0;
 }
 
+static int cmd_p(char *args) {
+	uint32_t num;
+	bool success;
+	num = expr(args,&success);
+	if(success) {
+		printf("%d\thex: 0x%x\n",num,num);
+	}
+	else {
+		printf("ERROR!\n");
+		assert(0);
+	}
+	return 0;
+}
+
 static struct {
 	char *name;
 	char *description;
@@ -92,8 +106,9 @@ static struct {
 	{ "c", "Continue the execution of the program", cmd_c },
 	{ "q", "Exit NEMU", cmd_q },
 	{ "si", "Pauses after the program stepping N instructions.N defaults to 1", cmd_si },
-	{ "info", "r : print register state\nw : print watchpoint information", cmd_info},
+	{ "info", "r : Print register state\nw : Print watchpoint information", cmd_info},
 	{ "x", "Scan memory", cmd_x},
+	{ "p", "Evaluate expression", cmd_p},
 
 	/* TODO: Add more commands */
 
