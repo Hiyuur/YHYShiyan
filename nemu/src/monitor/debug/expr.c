@@ -131,7 +131,7 @@ int check_parentheses(int p,int q) {
 
 int dominent_op(int p,int q) {
 	int i,j;
-	int op = q;
+	int op = p;
 	int min = 10;
 	for(i = p;i < q;i++) {
 		if(tokens[i].type == NUMBER) continue;
@@ -206,11 +206,11 @@ uint32_t expr(char *e, bool *success) {
 	int i;
 	for(i = 0;i < nr_token;i++) {
 		if(tokens[i].type == '-' && (i == 0 || (tokens[i - 1].type != NUMBER && tokens[i - 1].type != ')'))) {
-			tokens[i].type =MINUS;
+			tokens[i].type = MINUS;
 			tokens[i].priority = 6;
 		}
 		if(tokens[i].type == '*' && (i == 0 || (tokens[i - 1].type != NUMBER && tokens[i - 1].type != ')'))) {
-			tokens[i].type =POINTER;
+			tokens[i].type = POINTER;
 			tokens[i].priority = 6;
 		}
 	}
