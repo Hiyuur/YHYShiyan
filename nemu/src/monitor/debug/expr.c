@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-	NOTYPE = 256, EQ,NEQ,NUMBER,AND,OR,MINUS,POINTER
+	NOTYPE = 256, EQ,NEQ,NUMBER,AND,OR,MINUS,POINTER,HEXNUM
 
 	/* TODO: Add more token types */
 
@@ -36,6 +36,7 @@ static struct rule {
 	{"&&", AND, 2},
 	{"\\|\\|", OR, 1},
 	{"!", '!', 6},
+	{"0[xX][0-9a-fA-F]+", HEXNUM, 0},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -135,7 +136,7 @@ int dominent_op(int p,int q) {
 	int op = p;
 	int min = 10;
 	for(i = p;i <= q;i++) {
-		if(tokens[i].type == NUMBER) continue;
+		if(tokens[i].type == NUMBER || tokens[i].type == HEXNUM) continue;
 		int num = 0;
 		bool t = true;
 		for(j = i - 1;j >= p;j--) {
@@ -162,7 +163,10 @@ uint32_t eval(int p ,int q) {
 	}
 	else if(p == q) {
 		uint32_t num = 0;
+		if(tokens[p].type == NUMBER)
 		sscanf(tokens[p].str,"%d",&num);
+		if(tokens[p].type == HEXNUM)
+		sscanf(tokens[p].str,"%X",&num);
 		return num;
 	}
 	else if(check_parentheses(p,q) == true) {
