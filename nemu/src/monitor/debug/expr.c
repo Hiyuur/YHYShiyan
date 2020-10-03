@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-	NOTYPE = 256, EQ
+	NOTYPE = 256, EQ,NEQ,NUMBER,AND,OR,MINUS,POINTER
 
 	/* TODO: Add more token types */
 
@@ -16,15 +16,26 @@ enum {
 static struct rule {
 	char *regex;
 	int token_type;
+	int priority;
 } rules[] = {
 
 	/* TODO: Add more rules.
 	 * Pay attention to the precedence level of different rules.
 	 */
 
-	{" +",	NOTYPE},				// spaces
-	{"\\+", '+'},					// plus
-	{"==", EQ}						// equal
+	{" +", NOTYPE, 0},				// spaces
+	{"\\+", '+', 4},					// plus
+	{"==", EQ, 3},					// equal
+	{"/", '/', 5},
+	{"-", '-', 4},
+	{"\\*", '*', 5},
+	{"\\(", '(', 7},
+	{"\\)", ')', 7},
+	{"\\b[0-0]+\\b", NUMBER, 0},
+	{"!=", NEQ, 3},
+	{"&&", AND, 2},
+	{"\\|\\|", OR, 1},
+	{"!", '!', 6},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -51,6 +62,7 @@ void init_regex() {
 typedef struct token {
 	int type;
 	char str[32];
+	int priority;
 } Token;
 
 Token tokens[32];
@@ -77,9 +89,17 @@ static bool make_token(char *e) {
 				 * to record the token in the array `tokens'. For certain types
 				 * of tokens, some extra actions should be performed.
 				 */
+				
 
 				switch(rules[i].token_type) {
-					default: panic("please implement me");
+					case NOTYPE: break;
+					default: tokens[nr_token].type = rules[i].token_type;
+				             tokens[nr_token].priority = rules[i].priority;
+							 strncpy(tokens[nr_token].str,substr_start,substr_len);
+							 tokens[nr_token].str[substr_len] = '\0';
+							 nr_token++;
+
+					//panic("please implement me");
 				}
 
 				break;
@@ -95,6 +115,85 @@ static bool make_token(char *e) {
 	return true; 
 }
 
+int check_parentheses(int p,int q) {
+	int i;
+	if(tokens[p].type == '(' && tokens[p].type == ')') {
+		int num_l = 0;
+		int num_r = 0;
+		for(i = p + 1;i < q;i++) {
+			if(tokens[i].type == '(') num_l++;
+			if(tokens[i].type == ')') num_r++;
+		}
+		if(num_l == num_r)
+		return true;
+	}
+	return false;
+}
+
+int dominent_op(int p,int q) {
+	int i,j;
+	int op = q;
+	int min = 10;
+	for(i = p;i < q;i++) {
+		if(tokens[i].type == NUMBER) continue;
+		int num = 0;
+		bool t = true;
+		for(j = i - 1;j >= p;j--) {
+			if(tokens[j].type == '(' && !num) {
+				t = false;
+				break;
+			}
+			if(tokens[j].type == '(') num--;
+			if(tokens[j].type == '(') num++;
+		}
+		if(!t)
+		continue;
+		if(tokens[j].priority <= min) {
+			min = tokens[j].priority;
+			op = i;
+		}
+	}
+	return op;
+}
+
+uint32_t eval(int p ,int q) {
+	if(p > q) {
+		return 0;
+	}
+	else if(p == q) {
+		uint32_t num = 0;
+		sscanf(tokens[p].str,"%d",&num);
+		return num;
+	}
+	else if(check_parentheses(p,q) == true) {
+		return eval(p + 1,q - 1);
+	}
+	else {
+		int op = dominent_op(p,q);
+		if(p == op || tokens[op].type == MINUS || tokens[op].type == POINTER || tokens[op].type == '!') {
+			uint32_t tmp = eval(p + 1,q);
+			switch(tokens[p].type) {
+				case MINUS : return -tmp;
+				case POINTER : return swaddr_read(tmp,4);
+				case '!' : return !tmp;
+			}
+		}
+		int val1 = eval(p,op - 1);
+		int val2 = eval(op + 1,q);
+		switch(tokens[op].type) {
+			case '+': return val1 + val2;
+			case '-': return val1 - val2;
+			case '*': return val1 * val2;
+			case '/': return val1 / val2;
+			case EQ : return val1 == val2;
+			case NEQ : return val1 != val2;
+			case AND : return val1 && val2;
+			case OR : return val1 || val2;
+			default: assert(0);
+		}
+	}
+}
+
 uint32_t expr(char *e, bool *success) {
 	if(!make_token(e)) {
 		*success = false;
@@ -102,7 +201,20 @@ uint32_t expr(char *e, bool *success) {
 	}
 
 	/* TODO: Insert codes to evaluate the expression. */
-	panic("please implement me");
-	return 0;
+	//panic("please implement me");
+	int i;
+	for(i = 0;i < nr_token;i++) {
+		if(tokens[i].type == '-' && (i == 0 || (tokens[i - 1].type != NUMBER && tokens[i - 1].type != ')'))) {
+			tokens[i].type =MINUS;
+			tokens[i].priority = 6;
+		}
+		if(tokens[i].type == '*' && (i == 0 || (tokens[i - 1].type != NUMBER && tokens[i - 1].type != ')'))) {
+			tokens[i].type =POINTER;
+			tokens[i].priority = 6;
+		}
+	}
+	
+	*success = true;
+	return eval(0,nr_token - 1);
 }
 
