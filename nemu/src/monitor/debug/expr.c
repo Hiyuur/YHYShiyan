@@ -31,12 +31,12 @@ static struct rule {
 	{"\\*", '*', 5},
 	{"\\(", '(', 7},
 	{"\\)", ')', 7},
-	{"[0-9]+", NUMBER, 0},
+	{"\\b[0-9]+\\b", NUMBER, 0},
 	{"!=", NEQ, 3},
 	{"&&", AND, 2},
 	{"\\|\\|", OR, 1},
 	{"!", '!', 6},
-	{"0[0-9a-zA-Z]+", HEXNUM, 0},
+	{"\\b0[xX][0-9a-zA-Z]+\\b", HEXNUM, 0},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
