@@ -31,7 +31,7 @@ static struct rule {
 	{"\\*", '*', 5},
 	{"\\(", '(', 7},
 	{"\\)", ')', 7},
-	{"\\b[0-0]+\\b", NUMBER, 0},
+	{"\\b[0-9]+\\b", NUMBER, 0},
 	{"!=", NEQ, 3},
 	{"&&", AND, 2},
 	{"\\|\\|", OR, 1},
@@ -106,7 +106,6 @@ static bool make_token(char *e) {
 		}
 
 		if(i == NR_REGEX) {
-			printf("%lu",NR_REGEX);
 			printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
 			return false;
 		}
