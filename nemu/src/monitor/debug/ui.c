@@ -61,6 +61,9 @@ static int cmd_info(char *args) {
 		}
 		printf("eip\t0x%08x\n",cpu.eip);
 	}
+	else if(parm == 'w') {
+	info_w();
+	}
 	return 0;
 }
 
@@ -97,6 +100,28 @@ static int cmd_p(char *args) {
 	return 0;
 }
 
+static int cmd_w(char *args) {
+	bool success;
+	WP *p;
+	p = new_wp();
+	p->val = expr(args,&success);
+	if(!success) {
+		printf("Expr illegal!\n");
+		assert(0);
+	}
+	strcpy(p->expr,args);
+	printf("Watchpoint%d is working\n",p->NO);
+	printf("value: %d",p->val);
+	return 0;
+}
+
+static int cmd_d(char *args) {
+	int num;
+	sscanf(args,"%d",&num);
+	delete_wp(num);
+	return 0;
+}
+
 static struct {
 	char *name;
 	char *description;
@@ -109,6 +134,8 @@ static struct {
 	{ "info", "r : Print register state\nw : Print watchpoint information", cmd_info},
 	{ "x", "Scan memory", cmd_x},
 	{ "p", "Evaluate expression", cmd_p},
+	{ "w", "Make watchpoint", cmd_w},
+	{ "d", "Delete watchpoint", cmd_d},
 
 	/* TODO: Add more commands */
 
