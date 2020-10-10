@@ -7,7 +7,7 @@
 #include <regex.h>
 
 enum {
-	NOTYPE = 256, EQ,NEQ,NUMBER,AND,OR,MINUS,POINTER,HEXNUM
+	NOTYPE = 256, EQ,NEQ,NUMBER,AND,OR,MINUS,POINTER,HEXNUM,REG
 
 	/* TODO: Add more token types */
 
@@ -37,6 +37,7 @@ static struct rule {
 	{"!", '!', 6},
 	{"0[xX][0-9a-zA-Z]+", HEXNUM, 0},
 	{"[0-9]+", NUMBER, 0},
+	{"\\$[a-zA-Z]+", REG, 0},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -93,6 +94,12 @@ static bool make_token(char *e) {
 
 				switch(rules[i].token_type) {
 					case NOTYPE: break;
+					case REG: tokens[nr_token].type = rules[i].token_type;
+				              tokens[nr_token].priority = rules[i].priority;
+							  strncpy(tokens[nr_token].str,substr_start + 1,substr_len - 1);
+							  tokens[nr_token].str[substr_len - 1] = '\0';
+							  nr_token++;
+							  break;
 					default: tokens[nr_token].type = rules[i].token_type;
 				             tokens[nr_token].priority = rules[i].priority;
 							 strncpy(tokens[nr_token].str,substr_start,substr_len);
@@ -136,7 +143,7 @@ int dominent_op(int p,int q) {
 	int op = p;
 	int min = 10;
 	for(i = p;i <= q;i++) {
-		if(tokens[i].type == NUMBER || tokens[i].type == HEXNUM) continue;
+		if(tokens[i].type == NUMBER || tokens[i].type == HEXNUM || tokens[i].type == REG) continue;
 		int num = 0;
 		bool t = true;
 		for(j = i - 1;j >= p;j--) {
@@ -167,6 +174,51 @@ uint32_t eval(int p ,int q) {
 		sscanf(tokens[p].str,"%d",&num);
 		if(tokens[p].type == HEXNUM)
 		sscanf(tokens[p].str,"%X",&num);
+		if(tokens[p].type == REG) {
+			int len = strlen(tokens[p].str);
+			if(len == 3) {
+				int i;
+				for(i = R_EAX;i <= R_EDI;i++) {
+					if(strcmp(tokens[p].str,regsl[i]) == 0)
+					break;
+				}
+				if(i > R_EDI) {
+					if(strcmp(tokens[p].str,"eip") == 0) {
+						num = cpu.eip;
+					}
+					else {
+						printf("No this register!\n");
+						assert(1);
+					}
+				}
+				else {
+					num = reg_l(i);
+				}
+			}
+			else if(len == 2) {
+				if(tokens[p].str[1] == 'x' || tokens[p].str[1] == 'i' || tokens[p].str[1] == 'p') {
+					int i;
+					for(i = R_AX;i <= R_DI;i++) {
+						if(strcmp(tokens[p].str,regsw[i]) == 0)
+						num = reg_w(i);
+						break;
+					}
+				}
+				else if(tokens[p].str[1] == 'h' || tokens[p].str[1] == 'l') {
+					int i;
+					for(i = R_AL;i <= R_BH;i++) {
+						if(strcmp(tokens[p].str,regsb[i]) == 0) {
+							num = reg_b(i);
+							break;
+						}
+					}
+				}
+				else {
+					printf("No this register!\n");
+					assert(1);
+				}
+			}
+		}
 		return num;
 	}
 	else if(check_parentheses(p,q) == true) {
