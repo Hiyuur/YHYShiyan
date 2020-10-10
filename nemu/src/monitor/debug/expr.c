@@ -188,7 +188,7 @@ uint32_t eval(int p ,int q) {
 					}
 					else {
 						printf("No this register!\n");
-						assert(1);
+						assert(0);
 					}
 				}
 				else {
@@ -199,9 +199,10 @@ uint32_t eval(int p ,int q) {
 				if(tokens[p].str[1] == 'x' || tokens[p].str[1] == 'i' || tokens[p].str[1] == 'p') {
 					int i;
 					for(i = R_AX;i <= R_DI;i++) {
-						if(strcmp(tokens[p].str,regsw[i]) == 0)
+						if(strcmp(tokens[p].str,regsw[i]) == 0) {
 						num = reg_w(i);
 						break;
+						}
 					}
 				}
 				else if(tokens[p].str[1] == 'h' || tokens[p].str[1] == 'l') {
@@ -215,7 +216,7 @@ uint32_t eval(int p ,int q) {
 				}
 				else {
 					printf("No this register!\n");
-					assert(1);
+					assert(0);
 				}
 			}
 		}
