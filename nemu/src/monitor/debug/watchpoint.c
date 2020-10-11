@@ -103,7 +103,7 @@ void info_w() {
 	WP *p;
 	p = head;
 	while(p) {
-		printf("Watchpoint%d expr: %s vale: %d\n",p->NO,p->expr,p->val);
+		printf("Watchpoint%d expr: %s vale: %d hex:%08x\n",p->NO,p->expr,p->val,p->val);
 		p = p->next;
 	}
 }
