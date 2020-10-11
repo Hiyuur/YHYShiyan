@@ -91,7 +91,7 @@ static int cmd_p(char *args) {
 	bool success;
 	num = expr(args,&success);
 	if(success) {
-		printf("%d\thex: 0x%x\n",num,num);
+		printf("%d\thex: 0x%08x\n",num,num);
 	}
 	else {
 		printf("ERROR!\n");
@@ -111,7 +111,7 @@ static int cmd_w(char *args) {
 	}
 	strcpy(p->expr,args);
 	printf("Watchpoint%d is working\n",p->NO);
-	printf("value: %d",p->val);
+	printf("value: %d hex: 0x%08x\n",p->val,p->val);
 	return 0;
 }
 

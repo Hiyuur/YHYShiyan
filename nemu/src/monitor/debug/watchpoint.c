@@ -84,8 +84,8 @@ bool check_wp() {
 		if(tmp != p->val) {
 			t = false;
 			printf("The value of watchpoint is changed!\n");
-			printf("Before: %d\n",p->val);
-			printf("Now: %d\n",tmp);
+			printf("Before: %d hex: 0x%08x\n",p->val,p->val);
+			printf("Now: %d hex: 0x%08x\n",tmp,tmp);
 			p->val = tmp;
 		}
 		p = p->next;
@@ -103,7 +103,7 @@ void info_w() {
 	WP *p;
 	p = head;
 	while(p) {
-		printf("Watchpoint%d expr: %s vale: %d hex:%08x\n",p->NO,p->expr,p->val,p->val);
+		printf("Watchpoint%d expr: %s vale: %d hex: 0x%08x\n",p->NO,p->expr,p->val,p->val);
 		p = p->next;
 	}
 }
