@@ -9,6 +9,6 @@
 #include "call-template.h"
 #undef DATA_BYTE
 
-#define DATA_BYTE 3
+#define DATA_BYTE 4
 #include "call-template.h"
 #undef DATA_BYtE
