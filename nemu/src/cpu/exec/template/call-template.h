@@ -7,9 +7,9 @@ make_helper(concat(call_i_,SUFFIX)) {
     reg_l(R_ESP) -= DATA_BYTE;//stack_top pointer
     swaddr_write(reg_l(R_ESP),4,cpu.eip + len);
     DATA_TYPE_S displacement = op_src->val;
-    print_asm("call%x",cpu.eip + len + displacement + 1);
-    cpu.eip += displacement;
-    return len + 1;
+    print_asm("call %x",cpu.eip + len + displacement + 1);
+    cpu.eip += displacement;//eip will add(update) len + 1 in cpu-exec
+    return len + 1;//instr_length
 }
 
 make_helper(concat(call_rm_,SUFFIX)) {
@@ -17,7 +17,7 @@ make_helper(concat(call_rm_,SUFFIX)) {
     reg_l(R_ESP) -= DATA_BYTE;
     swaddr_write(reg_l(R_ESP),4,cpu.eip + len);
     DATA_TYPE_S displacement = op_src->val;
-    print_asm("call%x",displacement);
+    print_asm("call %x",displacement);
     cpu.eip = displacement - len - 1;
     return len + 1;
 }
