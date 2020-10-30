@@ -4,9 +4,10 @@
 
 static void do_execute() {
     DATA_TYPE result = op_src->val & op_dest->val;
+    int bits_len = DATA_BYTE << 3;
     cpu.OF = 0;
     cpu.CF = 0;
-    cpu.SF = result >> len;
+    cpu.SF = result >> (bits_len - 1);
     cpu.ZF = !result;
     result = result ^ (result >> 4);
     result = result ^ (result >> 2);

@@ -11,7 +11,7 @@ static void do_execute() {
     else {
         cpu.CF = 0;
     }
-    int bits_len = DATA_TYPE << 3;
+    int bits_len = DATA_BYTE << 3;
     cpu.SF = temp >> (bits_len - 1);
     int flag1 = op_dest->val >> (bits_len - 1);
     int flag2 = op_src-> val >> (bits_len - 1);

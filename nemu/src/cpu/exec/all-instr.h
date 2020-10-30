@@ -25,3 +25,12 @@
 #include "misc/misc.h"
 
 #include "special/special.h"
+
+#include "template/call.h"
+#include "template/ret.h"
+#include "template/push.h"
+#include "template/pop.h"
+#include "template/cmp.h"
+#include "template/je.h"
+#include "template/test.h"
+
