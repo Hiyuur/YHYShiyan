@@ -33,4 +33,7 @@
 #include "template/cmp.h"
 #include "template/je.h"
 #include "template/test.h"
-
+#include "template/add.h"
+#include "template/adc.h"
+#include "template/sub.h"
+#include "template/sbb.h"
