@@ -37,3 +37,6 @@
 #include "template/adc.h"
 #include "template/sub.h"
 #include "template/sbb.h"
+#include "template/setcc.h"
+#include "template/jmp.h"
+#include "template/jcc.h"
