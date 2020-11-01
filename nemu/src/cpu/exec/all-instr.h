@@ -41,3 +41,5 @@
 #include "template/jcc.h"
 #include "template/movs.h"
 #include "template/stos.h"
+#include "template/lods.h"
+#include "template/scas.h"
