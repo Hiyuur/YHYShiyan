@@ -1,6 +1,6 @@
 #include "cpu/exec/template-start.h"
 
-#define instr sub
+#define instr sbb
 
 static void do_execute() {
     DATA_TYPE temp = op_src->val;

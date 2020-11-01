@@ -31,7 +31,6 @@
 #include "template/push.h"
 #include "template/pop.h"
 #include "template/cmp.h"
-#include "template/je.h"
 #include "template/test.h"
 #include "template/add.h"
 #include "template/adc.h"
@@ -40,3 +39,5 @@
 #include "template/setcc.h"
 #include "template/jmp.h"
 #include "template/jcc.h"
+#include "template/movs.h"
+#include "template/stos.h"
