@@ -43,3 +43,4 @@
 #include "template/stos.h"
 #include "template/lods.h"
 #include "template/scas.h"
+#include "template/leave.h"
