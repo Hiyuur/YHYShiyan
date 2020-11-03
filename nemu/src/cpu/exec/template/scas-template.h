@@ -6,6 +6,16 @@ static void do_execute() {
     if(ops_decoded.is_operand_size_16) {
         uint32_t temp = reg_w(R_AX) - swaddr_read(reg_w(R_DI),4);
         cpu.ZF = !temp;
+        int bits_len = DATA_BYTE << 3;
+        cpu.SF = temp >> (bits_len - 1);
+        cpu.CF = reg_w(R_AX) < swaddr_read(reg_w(R_DI),4);
+        int temp1 = reg_w(R_AX) >> (bits_len - 1);
+        int temp2 = swaddr_read(reg_w(R_DI),4) >> (bits_len - 1);
+        cpu.OF = (temp1 != temp2 && temp2 == cpu.SF);
+        temp = temp ^ (temp >> 4);
+        temp = temp ^ (temp >> 2);
+        temp = temp ^ (temp >> 1);
+        cpu.PF = !(temp & 1);
         if(cpu.DF == 0) {
             reg_w(R_DI) += DATA_BYTE;
         }
@@ -16,6 +26,16 @@ static void do_execute() {
     else {
         uint32_t temp = reg_l(R_EAX) - swaddr_read(reg_l(R_EDI),4);
         cpu.ZF = !temp;
+        int bits_len = DATA_BYTE << 3;
+        cpu.SF = temp >> (bits_len - 1);
+        cpu.CF = reg_w(R_EAX) < swaddr_read(reg_w(R_EDI),4);
+        int temp1 = reg_w(R_EAX) >> (bits_len - 1);
+        int temp2 = swaddr_read(reg_w(R_EDI),4) >> (bits_len - 1);
+        cpu.OF = (temp1 != temp2 && temp2 == cpu.SF);
+        temp = temp ^ (temp >> 4);
+        temp = temp ^ (temp >> 2);
+        temp = temp ^ (temp >> 1);
+        cpu.PF = !(temp & 1);
         if(cpu.DF == 0) {
             reg_l(R_EDI) += DATA_BYTE;
         }
