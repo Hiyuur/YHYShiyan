@@ -2,7 +2,7 @@
 
 #define instr scas
 
-static void do_execute() {
+make_helper(concat(scas_, SUFFIX)) {
     uint32_t t2 = MEM_R(reg_l(R_EDI));
     uint32_t t1 = REG(R_EAX);
 
@@ -10,7 +10,7 @@ static void do_execute() {
 
     if (cpu.DF == 0) reg_l(R_EDI) += DATA_BYTE;
     else reg_l(R_EDI) -= DATA_BYTE;
-
+	/* TODO: Update EFLAGS. */
     cpu.ZF = !ret;
     cpu.SF = ret >> ((DATA_BYTE << 3) - 1);
     cpu.CF = (t1 < t2);
@@ -24,8 +24,9 @@ static void do_execute() {
     cpu.PF = !ret;
 
 	print_asm("scas");
+    return 1;
 }
 
-make_instr_helper(r)
+
 
 #include "cpu/exec/template-end.h"
