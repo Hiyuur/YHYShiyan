@@ -65,14 +65,23 @@ FLOAT f2F(float a) {
 	 * performing arithmetic operations on it directly?
 	 */
 	int b = *(int *)&a;
-	int sign = b >> 31;
+	int sign = b & 0x80000000;
 	int exp = (b >> 23) & 0xff;
-	FLOAT k = b & 0x7fffff;
-	if (exp != 0) k += 1 << 23;
-	exp -= 150;
-	if (exp < -16) k >>= -16 - exp;
-	if (exp > -16) k <<= exp + 16;
-	return sign == 0 ? k : -k;
+	int last = b & 0x7fffff;	
+	
+	if(exp == 255) {
+		if (sign) return -0x7fffffff;
+		else return 0x7fffffff;
+	}
+	
+	if(exp == 0) return 0;
+
+	last |= 1 << 23;
+	exp -= 134;	
+	if (exp < 0) last >>= -exp;
+	if (exp > 0) last <<= exp;
+
+	if (sign) return -last;else return last;
 	
 }
 
