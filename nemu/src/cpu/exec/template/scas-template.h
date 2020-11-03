@@ -4,13 +4,13 @@
 
 static void do_execute() {
 
-        uint32_t temp = reg_l(R_EAX) - swaddr_read(reg_l(R_EDI),4);
+        uint32_t temp = reg_l(R_EAX) - MEM_R(reg_l(R_EDI));
         cpu.ZF = !temp;
         int bits_len = DATA_BYTE << 3;
         cpu.SF = temp >> (bits_len - 1);
-        cpu.CF = reg_w(R_EAX) < swaddr_read(reg_w(R_EDI),4);
+        cpu.CF = reg_w(R_EAX) < MEM_R(reg_w(R_EDI));
         int temp1 = reg_w(R_EAX) >> (bits_len - 1);
-        int temp2 = swaddr_read(reg_w(R_EDI),4) >> (bits_len - 1);
+        int temp2 = MEM_R(reg_w(R_EDI)) >> (bits_len - 1);
         cpu.OF = (temp1 != temp2 && temp2 == cpu.SF);
         temp = temp ^ (temp >> 4);
         temp = temp ^ (temp >> 2);
