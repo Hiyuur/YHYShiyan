@@ -64,28 +64,16 @@ FLOAT f2F(float a) {
 	 * stack. How do you retrieve it to another variable without
 	 * performing arithmetic operations on it directly?
 	 */
-
-	void *temp = &a;
-	int val = * (int*) temp;
-	int sign = val >> 31;
-	int exp = (val >> 23) & 0xff;
-	FLOAT result = val &0x7fffff;
-	if(exp != 0) {
-		result = result + (1 << 23);
-	} 
+	int b = *(int *)&a;
+	int sign = b >> 31;
+	int exp = (b >> 23) & 0xff;
+	FLOAT k = b & 0x7fffff;
+	if (exp != 0) k += 1 << 23;
 	exp -= 150;
-	if(exp < -16) {
-		result = result >> (-16 - exp);
-	}
-	if(exp > -16) {
-		result = result << (exp + 16);
-	}
-	if(sign == 0) {
-		return result;
-	}
-	else {
-		return -result;
-	}
+	if (exp < -16) k >>= -16 - exp;
+	if (exp > -16) k <<= exp + 16;
+	return sign == 0 ? k : -k;
+	
 }
 
 FLOAT Fabs(FLOAT a) {
