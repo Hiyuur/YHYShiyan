@@ -55,7 +55,7 @@ clean: clean-cpp
 
 
 #####USERPROG = obj/testcase/mov
-USERPROG = obj/testcase/integral
+USERPROG = obj/testcase/matrix-mul-small
 ENTRY = $(USERPROG)
 
 entry: $(ENTRY)
