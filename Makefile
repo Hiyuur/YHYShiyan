@@ -55,7 +55,7 @@ clean: clean-cpp
 
 
 #####USERPROG = obj/testcase/mov
-USERPROG = obj/testcase/shuixianhua
+USERPROG = obj/testcase/string
 ENTRY = $(USERPROG)
 
 entry: $(ENTRY)
