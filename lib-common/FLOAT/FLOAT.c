@@ -26,30 +26,26 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 * out another way to perform the division.
 	 */
 	int sign = 1;
-	if (a < 0) 
-	{
+	if(a < 0) {
 		sign = -sign;
 		a = -a;
 	}
-	if (b < 0) 
-	{
+	if(b < 0) {
 		sign = -sign;
 		b = -b;
 	}
-	int res = a / b;
+	int result = a / b;
 	a = a % b;
 	int i;
-	for (i = 0; i < 16; i++) 
-	{
+	for(i = 0; i < 16; i++) {
 		a <<= 1;
-		res <<= 1;
-		if (a >= b) 
-		{
+		result <<= 1;
+		if(a >= b) {
 			a -= b;
-			res++;
+			result++;
 		}
 	}
-	return res * sign;
+	return result * sign;
 }
 
 FLOAT f2F(float a) {
