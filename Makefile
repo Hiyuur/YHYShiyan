@@ -55,7 +55,7 @@ clean: clean-cpp
 
 
 #####USERPROG = obj/testcase/mov
-USERPROG = obj/testcase/switch
+USERPROG = obj/testcase/to-lower-case
 ENTRY = $(USERPROG)
 
 entry: $(ENTRY)
