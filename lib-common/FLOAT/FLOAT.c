@@ -1,9 +1,8 @@
 #include "FLOAT.h"
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
-	long long temp = (long long)a * (long long)b;
-	FLOAT result = (FLOAT)(temp >> 16);
-	return result;
+	long long ret = 111 * a * b;
+	return (FLOAT)(ret >> 16);
 }
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
@@ -24,33 +23,20 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 * It is OK not to use the template above, but you should figure
 	 * out another way to perform the division.
 	 */
-	int sign;
-	if(a < 0) {
-		sign = -1;
-		a = -a;
-	}
-	else {
-		sign = 1;
-	}
-	if(b < 0) {
-		sign = -1;
-		b = -b;
-	}
-	else {
-		sign = 1;
-	}
-	int result = a / b;
-	a = a % b;
+	int op = 1;
+	if ((a < 0) == 1) op *= -1,a = -a;
+	if ((b < 0) == 1) op *= -1,b = -b;
+
+	int ret = a / b;
+	a %= b;
+
 	int i;
-	for (i = 0; i < 16; i++) {
-		a = a << 1;
-		result = result << 1;
-		if (a >= b) {
-			a = a - b;
-			result++;
-		}
+	for (i = 0;i < 16;i ++){
+		a <<= 1;
+		ret <<= 1;
+		if (a >= b) a -= b, ret |= 1;
 	}
-	return result * sign;
+	return op * ret; 
 	
 }
 
@@ -64,38 +50,29 @@ FLOAT f2F(float a) {
 	 * stack. How do you retrieve it to another variable without
 	 * performing arithmetic operations on it directly?
 	 */
-	void *temp = &a;
-	int val = * (int*) temp;
-	int sign = val >> 31;
-	int exp = (val >> 23) & 0xff;
-	FLOAT result = val &0x7fffff;
-	if(exp != 0) {
-		result = result + (1 << 23);
-	} 
-	exp -= 150;
-	if(exp < -16) {
-		result = result >> (-16 - exp);
+	int b = *(int *)&a;
+	int sign = b & 0x80000000;
+	int exp = (b >> 23) & 0xff;
+	int last = b & 0x7fffff;	
+	
+	if(exp == 255) {
+		if (sign) return -0x7fffffff;
+		else return 0x7fffffff;
 	}
-	if(exp > -16) {
-		result = result << (exp + 16);
-	}
-	if(sign == 0) {
-		return result;
-	}
-	else {
-		return -result;
-	}	
+	
+	if(exp == 0) return 0;
+
+	last |= 1 << 23;
+	exp -= 134;	
+	if (exp < 0) last >>= -exp;
+	if (exp > 0) last <<= exp;
+
+	if (sign) return -last;else return last;
+
 }
 
 FLOAT Fabs(FLOAT a) {
-	FLOAT b;
-	if(a < 0) {
-		b = - a;
-	}
-	else {
-		b = a;
-	}
-	return b;
+	if (a < 0) return -a;else return a;
 }
 
 /* Functions below are already implemented */
